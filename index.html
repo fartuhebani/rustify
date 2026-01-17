@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rustify — Rust in Minecraft</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body id="top">
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="#top">RUSTIFY</a>
+
+    <nav class="nav" aria-label="Навигация">
+      <a href="#about">О проекте</a>
+      <a href="#support">Поддержка</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+
+    <button class="btn btn-ghost header__btn" id="menuBtn" type="button" aria-label="Открыть меню">
+      ☰
+    </button>
+  </div>
+
+  <div class="container mobile-nav" id="mobileNav">
+    <a href="#about">О проекте</a>
+    <a href="#support">Поддержка</a>
+    <a href="#contacts">Контакты</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero__inner hero__inner--single">
+      <div class="hero__content">
+        <h1>Rustify</h1>
+        <p class="subtitle">
+          Rustify — это уникальный проект, который переносит атмосферу Rust в мир Minecraft.
+        </p>
+
+        <div class="actions">
+          <a class="btn btn-primary" href="#support">Поддержать проект</a>
+          <a class="btn btn-ghost" href="#about">Узнать больше</a>
+        </div>
+
+        <div class="chips">
+          <span class="chip">Выживание</span>
+          <span class="chip">PvP</span>
+          <span class="chip">Raid</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section container">
+    <div class="card">
+      <h2>О проекте</h2>
+      <p class="muted">
+        Rustify — новый уникальный проект, который переносит атмосферу Rust в мир Minecraft.
+        Жёсткое выживание, развитая система лута, строительство баз и постоянная борьба за ресурсы
+        создают по-настоящему напряжённый игровой процесс.
+        <br><br>
+        Здесь каждое решение имеет значение: риск, тактика и взаимодействие с другими игроками
+        определяют, кто выживет и станет сильнее.
+        Rustify — это не просто сервер, а отдельный мир, где выживает сильнейший.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat__num">24/7</div>
+          <div class="muted small">Поддержка</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">Модерация</div>
+          <div class="muted small">Активная и честная</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">Обновления</div>
+          <div class="muted small">Стабильность Развития</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section id="support" class="section container">
+    <div class="card support-card">
+      <h2>Поддержка проекта</h2>
+
+      <p class="muted">
+        Rustify развивается благодаря поддержке сообщества.
+        Если хочешь помочь проекту — напиши нам в Telegram.
+      </p>
+
+      <a
+        class="btn btn-primary support-btn"
+        href="https://t.me/arhipkabitz"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Поддержать проект
+      </a>
+
+      <p class="muted small support-note">
+        Поддержка не даёт игровых преимуществ и не ломает баланс.
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section id="contacts" class="section container">
+    <div class="card contacts-card">
+      <h2>Контакты</h2>
+      <p class="muted">Больше новостей проекта:</p>
+
+      <div class="contacts-list">
+        <a
+          class="contact-link"
+          href="https://t.me/rustifyy"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="tg-icon">ʕ•́ᴥ•̀ʔっ♡</span>
+          Telegram — @rustifyy
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <span class="muted small">© <span id="year"></span> Rustify (Vadim Pidor)</span>
+    <a class="muted small" href="#top">Наверх ↑</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
