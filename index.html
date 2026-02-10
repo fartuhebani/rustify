@@ -15,14 +15,11 @@
       --cardShadow: 0 18px 40px rgba(0,0,0,.16);
       --softShadow: 0 14px 30px rgba(0,0,0,.10);
 
-      --glass: rgba(255,255,255,.70);
-      --glass2: rgba(255,255,255,.62);
-
       --nav:#0c0d10;
       --navIcon: rgba(255,255,255,.75);
       --navIconActive: rgba(255,255,255,.95);
 
-      --marqueeBg:#9bdc8a; /* зелёная полоска */
+      --marqueeBg:#9bdc8a;
     }
 
     *{ box-sizing:border-box; }
@@ -38,6 +35,7 @@
       overflow:hidden;
     }
 
+    /* ===== app shell ===== */
     .app{ height:100%; width:100%; position:relative; }
 
     .view{
@@ -52,7 +50,62 @@
       pointer-events:none;
     }
 
-    /* ========= PIN ========= */
+    /* ===== bottom nav (НЕ показывать на PIN) ===== */
+    .bottomNav{
+      position:fixed;
+      left:0; right:0;
+      bottom:0;
+      padding: 10px 14px calc(env(safe-area-inset-bottom) + 10px);
+      background: var(--nav);
+      z-index:50;
+      display:block;
+    }
+    body.locked .bottomNav{ display:none; } /* <<< ВАЖНО: скрыто только на PIN */
+
+    .navRow{
+      width:min(430px, 100%);
+      margin:0 auto;
+      display:flex;
+      justify-content:space-around;
+      align-items:flex-end;
+      gap:10px;
+    }
+    .navItem{
+      width:24%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      color: var(--navIcon);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:-0.1px;
+      text-decoration:none;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .navItem svg{
+      width:26px; height:26px;
+      stroke: var(--navIcon);
+      fill:none;
+      stroke-width:2.2;
+    }
+    .navItem.active{ color: var(--navIconActive); }
+    .navItem.active svg{ stroke: var(--navIconActive); }
+
+    /* ===== common page scrolling ===== */
+    .page{ height:100%; overflow:hidden; }
+    .scroll{
+      height:100%;
+      overflow:auto;
+      padding: 16px 16px 96px; /* под nav */
+      scrollbar-width: thin;
+    }
+    .scroll::-webkit-scrollbar{ width:6px; }
+    .scroll::-webkit-scrollbar-thumb{ background: rgba(0,0,0,.22); border-radius:999px; }
+    .container{ width:min(430px, 100%); margin:0 auto; }
+
+    /* ===== PIN ===== */
     .lock{
       display:grid;
       place-items:center;
@@ -83,17 +136,14 @@
       justify-content:center;
     }
     .dot{
-      width:12px;
-      height:12px;
+      width:12px; height:12px;
       border-radius:999px;
       background: rgba(255,255,255,.55);
       box-shadow: 0 2px 10px rgba(0,0,0,.08) inset;
       transition: transform .18s ease, background-color .18s ease;
     }
-    .dot.filled{
-      background: rgba(255,255,255,.92);
-      transform: scale(1.08);
-    }
+    .dot.filled{ background: rgba(255,255,255,.92); transform: scale(1.08); }
+
     .pad{
       width:100%;
       max-width:340px;
@@ -151,7 +201,7 @@
       text-align:center;
     }
 
-    /* Ripple */
+    /* ripple */
     .ripple{
       position:absolute;
       border-radius:999px;
@@ -167,25 +217,7 @@
       to   { opacity:0;  transform: translate(-50%,-50%) scale(18); }
     }
 
-    /* ========= Common layout for pages ========= */
-    .page{
-      height:100%;
-      overflow:hidden;
-    }
-    .scroll{
-      height:100%;
-      overflow:auto;
-      padding: 16px 16px 96px; /* under bottom nav */
-      scrollbar-width: thin;
-    }
-    .scroll::-webkit-scrollbar{ width:6px; }
-    .scroll::-webkit-scrollbar-thumb{
-      background: rgba(0,0,0,.22);
-      border-radius:999px;
-    }
-    .container{ width:min(430px, 100%); margin:0 auto; }
-
-    /* ========= Feed (Стрічка) ========= */
+    /* ===== Feed (Стрічка) – оставил как было (коротко) ===== */
     .hello{
       margin: 10px 2px 14px;
       font-size:42px;
@@ -195,219 +227,32 @@
       color:#000;
     }
 
-    .card{
-      border-radius:26px;
-      overflow:hidden;
-      box-shadow: var(--cardShadow);
-      margin: 14px 0;
-      background: rgba(255,255,255,.10);
-    }
-
-    .diiaCard{
-      height:205px;
-      background:
-        radial-gradient(140px 120px at 76% 44%, rgba(66,203,255,.55), transparent 60%),
-        radial-gradient(220px 160px at 80% 55%, rgba(10,85,255,.45), transparent 62%),
-        radial-gradient(240px 170px at 72% 88%, rgba(178,255,84,.35), transparent 64%),
-        linear-gradient(180deg, rgba(0,0,0,.88), rgba(0,0,0,.70));
-      position:relative;
-    }
-    .diiaCard::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(500px 240px at 60% 120%, rgba(255,204,0,.25), transparent 55%);
-      pointer-events:none;
-      opacity:.9;
-    }
-    .diiaInner{
-      position:absolute; inset:0;
-      padding: 22px 22px 16px;
-      display:flex; flex-direction:column; justify-content:space-between;
-      z-index:1;
-    }
-    .diiaTitle{
-      color:#fff;
-      font-weight:750;
-      letter-spacing:-0.3px;
-      font-size:34px;
-      line-height:1.05;
-      margin:0;
-    }
-    .diiaSub{
-      margin-top:10px;
-      color: rgba(255,255,255,.86);
-      font-weight:600;
-      font-size:18px;
-      letter-spacing:-0.1px;
-    }
-    .diiaFooter{
-      display:flex; align-items:center; justify-content:space-between;
-      background: linear-gradient(90deg, rgba(0,0,0,.18), rgba(0,0,0,.05));
-      border-top: 1px solid rgba(255,255,255,.10);
-      padding: 14px 18px;
-      margin: 0 -22px -16px;
-      backdrop-filter: blur(10px);
-    }
-    .diiaFooter span{
-      color: rgba(255,255,255,.92);
-      font-weight:750;
-      font-size:22px;
-      letter-spacing:-0.2px;
-    }
-
-    .circleArrow{
-      width:38px; height:38px;
-      border-radius:999px;
-      display:grid; place-items:center;
-      background: rgba(255,255,255,.92);
-      box-shadow: 0 10px 18px rgba(0,0,0,.25);
-      flex:0 0 auto;
-    }
-    .circleArrow svg{ width:18px; height:18px; stroke:#0b0f14; stroke-width:2.4; fill:none; }
-
-    .lightCard{
-      background: rgba(255,255,255,.50);
-      border: 1px solid rgba(255,255,255,.45);
-      box-shadow: 0 18px 40px rgba(0,0,0,.10);
-    }
-    .lightInner{
-      padding: 20px 20px 18px;
-      display:flex; flex-direction:column; gap:8px;
-    }
-    .lightTitle{
-      font-size:34px;
-      font-weight:800;
-      letter-spacing:-0.35px;
-      margin:0;
-      color:#000;
-    }
-    .lightSub{
-      margin:0;
-      font-size:18px;
-      font-weight:600;
-      letter-spacing:-0.1px;
-      color: rgba(0,0,0,.78);
-    }
-    .lightRow{
-      margin-top:12px;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .pillIcons{ display:flex; gap:10px; align-items:center; }
-    .pill{
-      width:38px; height:38px;
-      border-radius:999px;
-      display:grid; place-items:center;
-      box-shadow: 0 12px 18px rgba(0,0,0,.12);
-    }
-    .pill.blue{ background:#1f6bff; }
-    .pill.yellow{ background:#ffd60a; }
-    .pill svg{ width:20px; height:20px; fill:#fff; }
-    .pill.yellow svg{ fill:#000; }
-
-    .circleArrow.dark{
-      background: rgba(0,0,0,.92);
-      box-shadow: 0 14px 22px rgba(0,0,0,.22);
-    }
-    .circleArrow.dark svg{ stroke:#fff; }
-
-    .quickRow{
-      display:flex;
-      justify-content:space-between;
-      gap:16px;
-      margin: 18px 0 6px;
-    }
-    .qa{
-      width: 30.5%;
-      display:flex; flex-direction:column; align-items:center;
-      gap:10px; text-align:center; color:#000;
-    }
-    .qaBtn{
-      width:78px; height:78px;
-      border-radius:22px;
-      background: rgba(0,0,0,.92);
-      display:grid; place-items:center;
-      box-shadow: 0 14px 26px rgba(0,0,0,.18);
-    }
-    .qaBtn svg{ width:34px; height:34px; stroke:#fff; fill:none; stroke-width:2.2; }
-    .qaLabel{
-      font-size:18px;
-      font-weight:700;
-      letter-spacing:-0.15px;
-      line-height:1.15;
-    }
-
-    .banner{
-      height:210px;
-      background:
-        radial-gradient(240px 140px at 35% 50%, rgba(255,255,255,.08), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.72)),
-        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="%23000000" offset="0"/><stop stop-color="%23101010" offset="1"/></linearGradient></defs><rect width="100%25" height="100%25" fill="url(%23g)"/><g opacity="0.22" fill="%23ffffff"><circle cx="120" cy="90" r="42"/><circle cx="240" cy="150" r="54"/><circle cx="370" cy="110" r="44"/><circle cx="520" cy="160" r="62"/><circle cx="690" cy="120" r="48"/></g></svg>');
-      background-size: cover;
-      background-position:center;
-      position:relative;
-    }
-    .bannerInner{
-      position:absolute; inset:0;
-      padding: 22px;
-      display:flex; flex-direction:column; justify-content:space-between;
-    }
-    .bannerTop{
-      display:flex; gap:16px; align-items:center;
-    }
-    .badge{
-      width:74px; height:74px;
-      border-radius:20px;
-      background: rgba(255,255,255,.10);
-      border: 2px solid rgba(255,255,255,.22);
-      display:grid; place-items:center;
-      backdrop-filter: blur(10px);
-    }
-    .badge svg{ width:44px; height:44px; fill:#fff; }
-    .bannerTitle{
-      color:#fff;
-      font-weight:900;
-      letter-spacing:0.6px;
-      font-size:44px;
-      line-height:0.92;
-      text-transform:uppercase;
-    }
-    .bannerFooter{
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 14px 0 0;
-      border-top: 1px solid rgba(255,255,255,.10);
-      color:#fff;
-      font-weight:800;
-      font-size:22px;
-      letter-spacing:-0.2px;
-    }
-
-    /* ========= Documents page (как на видео) ========= */
+    /* ===== Documents page (сделано шире как в видео) ===== */
     .docsBg{
-      /* более “пастельная” подложка как в видео */
       background:
         radial-gradient(520px 420px at 16% 74%, rgba(255,170,200,.55), transparent 62%),
         radial-gradient(520px 420px at 82% 74%, rgba(255,220,120,.55), transparent 62%),
         radial-gradient(560px 480px at 75% 18%, rgba(150,210,255,.60), transparent 62%),
         radial-gradient(560px 480px at 20% 10%, rgba(130,220,200,.52), transparent 62%),
         linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
-      position:relative;
     }
 
+    /* карусель почти во весь экран */
     .carousel{
-      margin-top: 44px; /* как в видео — карточка почти от верха */
+      margin-top: 40px;
       display:flex;
-      gap:18px;
+      gap:16px;
       overflow-x:auto;
       scroll-snap-type:x mandatory;
-      padding: 0 14px 8px;
+      padding: 0 16px 10px; /* как на видео */
       -webkit-overflow-scrolling: touch;
     }
     .carousel::-webkit-scrollbar{ height:0; }
 
     .docCard{
       scroll-snap-align:center;
-      flex: 0 0 86%;
-      max-width: 380px;
+      flex: 0 0 92%;          /* <<< ШИРЕ */
+      max-width: 420px;       /* <<< ШИРЕ */
       height: 640px;
       border-radius: 28px;
       background: rgba(255,255,255,.34);
@@ -418,30 +263,32 @@
       backdrop-filter: blur(10px);
     }
 
-    /* внутри карточки – верхний блок */
+    .docTitle{
+      position:absolute;
+      top:18px; left:22px;
+      font-size:38px;          /* ближе к видео */
+      font-weight:800;
+      letter-spacing:-0.35px;
+      color:#000;
+    }
+
     .docTop{
       display:flex;
       gap:18px;
       padding: 26px 22px 0;
       align-items:flex-start;
     }
-    .docTitle{
-      position:absolute;
-      top:18px; left:22px;
-      font-size:44px;
-      font-weight:800;
-      letter-spacing:-0.35px;
-      color:#000;
-    }
+
+    /* ИКОНКА "Дія" — больше и квадратнее, как в видео */
     .docLogo{
-      width:190px;
-      height:248px;
+      width:220px;
+      height:240px;
       border-radius:24px;
       background: linear-gradient(180deg, rgba(0,0,0,.95), rgba(0,0,0,.85));
       box-shadow: 0 18px 34px rgba(0,0,0,.28);
       display:grid;
       place-items:center;
-      margin-top: 78px;
+      margin-top: 58px;
       position:relative;
       overflow:hidden;
     }
@@ -461,32 +308,33 @@
       z-index:1;
     }
 
+    /* правый текст — компактнее */
     .docInfo{
-      margin-top: 98px;
-      font-size:34px;
-      line-height:1.04;
+      margin-top: 78px;
+      font-size:18px;
+      line-height:1.15;
       font-weight:800;
-      letter-spacing:-0.25px;
+      letter-spacing:-0.15px;
       color:#000;
     }
     .docInfo .muted{
       display:block;
-      font-weight:700;
-      color: rgba(0,0,0,.88);
+      font-weight:800;
+      color: rgba(0,0,0,.92);
     }
     .docInfo .small{
       display:block;
-      margin-top: 8px;
-      font-weight:700;
-      color: rgba(0,0,0,.88);
+      margin-top: 4px;
+      font-weight:800;
+      color: rgba(0,0,0,.92);
     }
 
-    /* зелёная строка (бегущая) */
+    /* бегущая строка — позиция/высота ближе к видео */
     .marqueeBar{
       position:absolute;
       left:0; right:0;
-      top: 396px;          /* как в видео — примерно середина карточки */
-      height: 54px;
+      top: 398px;
+      height: 52px;
       background: var(--marqueeBg);
       box-shadow: inset 0 1px 0 rgba(0,0,0,.06);
       overflow:hidden;
@@ -502,9 +350,9 @@
       padding-left: 24px;
     }
     .marqueeText{
-      font-size:30px;
-      font-weight:800;
-      letter-spacing:-0.2px;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:-0.1px;
       color:#0b0f14;
     }
     @keyframes marquee{
@@ -512,27 +360,26 @@
       to   { transform: translateX(-50%); }
     }
 
-    /* низ карточки */
+    /* низ карточки — как на видео (НЕ огромный текст) */
     .docBottom{
       position:absolute;
-      left:22px;
-      right:22px;
-      bottom: 28px;
+      left:22px; right:22px;
+      bottom: 26px;
       display:flex;
       align-items:flex-end;
       justify-content:space-between;
       gap:16px;
     }
     .fio{
-      font-size:54px;
-      line-height:0.95;
+      font-size:28px;
+      line-height:1.02;
       font-weight:900;
-      letter-spacing:-0.35px;
+      letter-spacing:-0.2px;
       color:#000;
     }
     .moreBtn{
-      width:52px;
-      height:52px;
+      width:44px;
+      height:44px;
       border-radius:999px;
       background: rgba(0,0,0,.92);
       display:grid;
@@ -541,13 +388,13 @@
       flex:0 0 auto;
     }
     .moreBtn span{
-      width:6px; height:6px; border-radius:999px;
+      width:5px; height:5px; border-radius:999px;
       background:#fff;
-      box-shadow: 10px 0 0 #fff, -10px 0 0 #fff;
+      box-shadow: 9px 0 0 #fff, -9px 0 0 #fff;
       display:block;
     }
 
-    /* точки-пейджер под каруселью */
+    /* pager dots */
     .pager{
       margin-top: 14px;
       display:flex;
@@ -556,69 +403,31 @@
       opacity:.85;
     }
     .pDot{
-      width:10px; height:10px; border-radius:999px;
+      width:8px; height:8px;
+      border-radius:999px;
       background: rgba(255,255,255,.55);
       box-shadow: 0 2px 10px rgba(0,0,0,.10);
       transition: transform .15s ease, background .15s ease;
     }
     .pDot.active{
       background: rgba(255,255,255,.92);
-      transform: scale(1.08);
+      transform: scale(1.1);
     }
-
-    /* ========= Bottom nav ========= */
-    .bottomNav{
-      position:fixed;
-      left:0; right:0;
-      bottom:0;
-      padding: 10px 14px calc(env(safe-area-inset-bottom) + 10px);
-      background: var(--nav);
-      z-index:50;
-    }
-    .navRow{
-      display:flex;
-      justify-content:space-around;
-      align-items:flex-end;
-      gap:10px;
-    }
-    .navItem{
-      width:24%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-      color: var(--navIcon);
-      font-size:14px;
-      font-weight:700;
-      letter-spacing:-0.1px;
-      text-decoration:none;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .navItem svg{
-      width:26px; height:26px;
-      stroke: var(--navIcon);
-      fill:none;
-      stroke-width:2.2;
-    }
-    .navItem.active{ color: var(--navIconActive); }
-    .navItem.active svg{ stroke: var(--navIconActive); }
 
     @media (max-height: 720px){
       .lock h1{ font-size:38px; }
       .key{ height:78px; font-size:38px; }
       .pad{ gap:14px 16px; }
-      .hello{ font-size:38px; }
-      .docCard{ height: 600px; }
-      .fio{ font-size:50px; }
-      .marqueeBar{ top: 372px; }
+      .docCard{ height: 610px; }
+      .marqueeBar{ top: 382px; }
     }
   </style>
 </head>
-<body>
+
+<body class="locked">
   <div class="app">
 
-    <!-- ===== VIEW: PIN ===== -->
+    <!-- ===== PIN ===== -->
     <section class="view lock" id="viewLock" aria-label="PIN view">
       <div class="lockWrap">
         <h1>Код для входу</h1>
@@ -667,120 +476,22 @@
       </div>
     </section>
 
-    <!-- ===== VIEW: FEED (Стрічка) ===== -->
+    <!-- ===== FEED (placeholder) ===== -->
     <section class="view page hidden" id="viewFeed" aria-label="Feed view">
       <div class="scroll">
         <div class="container">
           <div class="hello">Привіт, 🎄</div>
-
-          <div class="card diiaCard">
-            <div class="diiaInner">
-              <div>
-                <div class="diiaTitle">Дія.Картка</div>
-                <div class="diiaSub">Єдина картка українця</div>
-              </div>
-              <div class="diiaFooter">
-                <span>Відкрити картку</span>
-                <div class="circleArrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-              </div>
-            </div>
+          <div style="font-size:18px;font-weight:700;color:rgba(0,0,0,.7);">
+            Демo-стрічка. Натисни «Документи».
           </div>
-
-          <div class="card lightCard">
-            <div class="lightInner">
-              <h2 class="lightTitle">Незламність</h2>
-              <p class="lightSub">Мапа пунктів Незламності та Укриттів</p>
-
-              <div class="lightRow">
-                <div class="pillIcons">
-                  <div class="pill blue" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M12 22s7-4.4 7-12a7 7 0 0 0-14 0c0 7.6 7 12 7 12z"/>
-                      <circle cx="12" cy="10" r="2.6" fill="#1f6bff"></circle>
-                    </svg>
-                  </div>
-                  <div class="pill yellow" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 10-14h-7l0-6z"/></svg>
-                  </div>
-                </div>
-
-                <div class="circleArrow dark" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="quickRow">
-            <div class="qa">
-              <div class="qaBtn" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4 5h16v6H4z"/>
-                  <path d="M4 15h10v4H4z"/>
-                  <path d="M16 15h4v4h-4z"/>
-                </svg>
-              </div>
-              <div class="qaLabel">Сканувати<br>QR-код</div>
-            </div>
-
-            <div class="qa">
-              <div class="qaBtn" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 3v18" />
-                  <path d="M12 3c3 3 4 5 4 8 0 4-2 7-4 10" />
-                  <path d="M12 3c-3 3-4 5-4 8 0 4 2 7 4 10" />
-                  <path d="M8 12c2 1 6 1 8 0" />
-                </svg>
-              </div>
-              <div class="qaLabel">Військові<br>облігації</div>
-            </div>
-
-            <div class="qa">
-              <div class="qaBtn" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4 20h16" />
-                  <path d="M7 16l10-10" />
-                  <path d="M9 14a5 5 0 0 1 6-6" />
-                  <path d="M7 12a8 8 0 0 1 10-10" />
-                </svg>
-              </div>
-              <div class="qaLabel">Відсутній<br>зв'язок</div>
-            </div>
-          </div>
-
-          <div class="card banner">
-            <div class="bannerInner">
-              <div class="bannerTop">
-                <div class="badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 3l7 3v6c0 5-3.4 8.6-7 9-3.6-.4-7-4-7-9V6l7-3z"/>
-                    <path d="M9.2 8.5v8.7" fill="none"/>
-                    <path d="M14.8 8.5v8.7" fill="none"/>
-                    <path d="M9.2 8.5c1.6 1.4 4 1.4 5.6 0" fill="none"/>
-                  </svg>
-                </div>
-                <div class="bannerTitle">ЛІНІЯ<br>ДРОНІВ</div>
-              </div>
-
-              <div class="bannerFooter">
-                <span>Змінити хід подій</span>
-                <div class="circleArrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
     </section>
 
-    <!-- ===== VIEW: DOCUMENTS (как на видео) ===== -->
+    <!-- ===== DOCS ===== -->
     <section class="view page hidden docsBg" id="viewDocs" aria-label="Documents view">
       <div class="scroll" style="padding-left:0;padding-right:0;">
-        <div class="container" style="width:100%;max-width:100%;">
+        <div style="width:100%;">
           <div class="carousel" id="docCarousel" aria-label="Документи карусель">
             <!-- Card 1 -->
             <article class="docCard">
@@ -800,7 +511,6 @@
                 </div>
               </div>
 
-              <!-- БЕГАЮЩАЯ СТРОКА -->
               <div class="marqueeBar" aria-label="Маркер-строка">
                 <div class="marqueeTrack">
                   <div class="marqueeText">Ой у лузі червона калина похилилася, чогось наша славна Україна…</div>
@@ -814,17 +524,12 @@
               </div>
             </article>
 
-            <!-- Card 2 (чтобы справа была видна часть как в видео) -->
+            <!-- Card 2 (чтобы справа был виден кусочек, как на видео) -->
             <article class="docCard" style="background: rgba(255,255,255,.28);">
-              <div class="docTitle" style="opacity:.0">.</div>
-              <div class="docTop">
-                <div class="docLogo" aria-hidden="true" style="opacity:.25">
-                  <span>Дія</span>
-                </div>
-                <div class="docInfo" style="opacity:.35">
-                  <span class="muted">…</span>
-                  <span class="small">…</span>
-                </div>
+              <div class="docTitle" style="opacity:0;">.</div>
+              <div class="docTop" style="opacity:.35">
+                <div class="docLogo" aria-hidden="true"><span>Дія</span></div>
+                <div class="docInfo"><span class="muted">…</span><span class="small">…</span></div>
               </div>
               <div class="marqueeBar" style="opacity:.65">
                 <div class="marqueeTrack" style="animation-duration: 12s;">
@@ -832,14 +537,13 @@
                   <div class="marqueeText">Ой у лузі червона калина похилилася…</div>
                 </div>
               </div>
-              <div class="docBottom">
-                <div class="fio" style="opacity:.35">…</div>
-                <div class="moreBtn" aria-hidden="true" style="opacity:.45"><span></span></div>
+              <div class="docBottom" style="opacity:.35">
+                <div class="fio">…</div>
+                <div class="moreBtn" aria-hidden="true"><span></span></div>
               </div>
             </article>
           </div>
 
-          <!-- pager dots like video -->
           <div class="pager" id="docPager" aria-label="pager">
             <div class="pDot active"></div>
             <div class="pDot"></div>
@@ -851,42 +555,17 @@
             <div class="pDot"></div>
             <div class="pDot"></div>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- ===== VIEW: SERVICES (placeholder) ===== -->
-    <section class="view page hidden" id="viewServices" aria-label="Services view">
-      <div class="scroll">
-        <div class="container">
-          <div class="hello" style="font-size:38px;">Сервіси</div>
-          <div class="card lightCard" style="padding:18px;">
-            <div style="font-size:20px;font-weight:700;color:rgba(0,0,0,.75);">
-              Заглушка. Якщо хочеш — зроблю екран сервісів як у відео теж.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- placeholders -->
+    <section class="view page hidden" id="viewServices"><div class="scroll"><div class="container"><div class="hello" style="font-size:38px;">Сервіси</div></div></div></section>
+    <section class="view page hidden" id="viewMenu"><div class="scroll"><div class="container"><div class="hello" style="font-size:38px;">Меню</div></div></div></section>
 
-    <!-- ===== VIEW: MENU (placeholder) ===== -->
-    <section class="view page hidden" id="viewMenu" aria-label="Menu view">
-      <div class="scroll">
-        <div class="container">
-          <div class="hello" style="font-size:38px;">Меню</div>
-          <div class="card lightCard" style="padding:18px;">
-            <div style="font-size:20px;font-weight:700;color:rgba(0,0,0,.75);">
-              Заглушка. Якщо потрібно — повторю “Меню” з відео 1-в-1.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Bottom nav (общая) -->
-    <nav class="bottomNav" aria-label="Bottom navigation">
-      <div class="navRow container">
+    <!-- bottom nav (появляется только после PIN) -->
+    <nav class="bottomNav" aria-label="Bottom navigation" id="bottomNav">
+      <div class="navRow">
         <a class="navItem active" href="javascript:void(0)" data-nav="feed">
           <svg viewBox="0 0 24 24">
             <path d="M4 5h16v6H4z"/>
@@ -953,15 +632,14 @@
     }
 
     function showView(name){
-      Object.entries(views).forEach(([k, el]) => {
-        el.classList.toggle("hidden", k !== name);
-      });
+      Object.entries(views).forEach(([k, el]) => el.classList.toggle("hidden", k !== name));
       navItems.forEach(a => a.classList.toggle("active", a.dataset.nav === name));
     }
 
     function enterApp(){
+      // убираем режим PIN => появляется bottom nav
+      document.body.classList.remove("locked");
       viewLock.classList.add("hidden");
-      // по умолчанию открываем "Стрічка"
       showView("feed");
     }
 
@@ -969,9 +647,7 @@
       if (entered.length >= 4) return;
       entered += d;
       setDots(entered.length);
-      if (entered.length === 4){
-        setTimeout(enterApp, 120);
-      }
+      if (entered.length === 4) setTimeout(enterApp, 120);
     }
 
     function del(){
@@ -992,16 +668,15 @@
 
     // keyboard optional
     window.addEventListener("keydown", (e) => {
-      if (!viewLock.classList.contains("hidden")) {
-        if (e.key >= "0" && e.key <= "9") handleDigit(e.key);
-        if (e.key === "Backspace") del();
-      }
+      if (!document.body.classList.contains("locked")) return;
+      if (e.key >= "0" && e.key <= "9") handleDigit(e.key);
+      if (e.key === "Backspace") del();
     });
 
-    // ===== Bottom navigation =====
+    // nav
     navItems.forEach(a => {
       a.addEventListener("click", () => {
-        if (!viewLock.classList.contains("hidden")) return; // пока на PIN — не переключаем
+        if (document.body.classList.contains("locked")) return;
         showView(a.dataset.nav);
       });
     });
@@ -1011,21 +686,17 @@
     const pagerDots = Array.from(document.querySelectorAll("#docPager .pDot"));
 
     function updatePager(){
-      // active based on nearest card center
       const cards = Array.from(carousel.querySelectorAll(".docCard"));
       const center = carousel.scrollLeft + carousel.clientWidth / 2;
       let bestIdx = 0, bestDist = Infinity;
-
       cards.forEach((c, i) => {
         const cardCenter = c.offsetLeft + c.clientWidth / 2;
         const dist = Math.abs(cardCenter - center);
         if (dist < bestDist) { bestDist = dist; bestIdx = i; }
       });
-
-      // video shows many dots; we’ll light first dots by index
       pagerDots.forEach((d, i) => d.classList.toggle("active", i === bestIdx));
     }
-    carousel.addEventListener("scroll", () => requestAnimationFrame(updatePager), { passive:true });
+    carousel?.addEventListener("scroll", () => requestAnimationFrame(updatePager), { passive:true });
     updatePager();
   </script>
 </body>
