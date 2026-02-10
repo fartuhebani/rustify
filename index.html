@@ -1,155 +1,1032 @@
 <!doctype html>
-<html lang="ru">
+<html lang="uk">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rustify — Rust in Minecraft</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Demo</title>
+  <style>
+    :root{
+      --bgTop:#b9d7f2;
+      --bgBot:#cfe9df;
+
+      --text:#0b0f14;
+      --muted: rgba(11,15,20,.62);
+
+      --cardShadow: 0 18px 40px rgba(0,0,0,.16);
+      --softShadow: 0 14px 30px rgba(0,0,0,.10);
+
+      --glass: rgba(255,255,255,.70);
+      --glass2: rgba(255,255,255,.62);
+
+      --nav:#0c0d10;
+      --navIcon: rgba(255,255,255,.75);
+      --navIconActive: rgba(255,255,255,.95);
+
+      --marqueeBg:#9bdc8a; /* зелёная полоска */
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background: linear-gradient(180deg, var(--bgTop), var(--bgBot));
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow:hidden;
+    }
+
+    .app{ height:100%; width:100%; position:relative; }
+
+    .view{
+      position:absolute;
+      inset:0;
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+      transition: opacity .22s ease, transform .22s ease;
+    }
+    .view.hidden{
+      opacity:0;
+      transform: translateY(10px);
+      pointer-events:none;
+    }
+
+    /* ========= PIN ========= */
+    .lock{
+      display:grid;
+      place-items:center;
+      overflow:auto;
+    }
+    .lockWrap{
+      width:min(420px, 92vw);
+      height:min(860px, 92vh);
+      padding:52px 22px 28px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      position:relative;
+    }
+    .lock h1{
+      margin:18px 0 16px;
+      font-size:44px;
+      line-height:1.05;
+      font-weight:600;
+      letter-spacing:-0.2px;
+      text-align:center;
+    }
+    .dots{
+      display:flex;
+      gap:14px;
+      margin:10px 0 26px;
+      align-items:center;
+      justify-content:center;
+    }
+    .dot{
+      width:12px;
+      height:12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 2px 10px rgba(0,0,0,.08) inset;
+      transition: transform .18s ease, background-color .18s ease;
+    }
+    .dot.filled{
+      background: rgba(255,255,255,.92);
+      transform: scale(1.08);
+    }
+    .pad{
+      width:100%;
+      max-width:340px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px 20px;
+      margin-top:10px;
+    }
+    .key{
+      position:relative;
+      height:92px;
+      border:none;
+      border-radius:999px;
+      background: rgba(255,255,255,.70);
+      box-shadow: var(--softShadow);
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      overflow:hidden;
+
+      display:grid;
+      place-items:center;
+
+      font-size:44px;
+      line-height:1;
+      font-weight:600;
+      letter-spacing:-0.2px;
+      color: rgba(0,0,0,.88);
+
+      transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease;
+    }
+    .key::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:999px;
+      border: 1.5px solid rgba(255,255,255,.72);
+      pointer-events:none;
+    }
+    .key:active{
+      transform: scale(.94);
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 10px 18px rgba(0,0,0,.10);
+    }
+    .key.icon{ font-size:0; }
+    .key.icon svg{ width:40px; height:40px; stroke: rgba(0,0,0,.78); }
+
+    .note{
+      margin-top:auto;
+      padding-top:20px;
+      font-size:18px;
+      font-weight:500;
+      letter-spacing:-0.1px;
+      color: rgba(0,0,0,.75);
+      text-align:center;
+    }
+
+    /* Ripple */
+    .ripple{
+      position:absolute;
+      border-radius:999px;
+      transform: translate(-50%,-50%);
+      pointer-events:none;
+      width:10px; height:10px;
+      background: rgba(255,255,255,.55);
+      animation: ripple .45s ease-out forwards;
+      mix-blend-mode: soft-light;
+    }
+    @keyframes ripple{
+      from { opacity:.9; transform: translate(-50%,-50%) scale(1); }
+      to   { opacity:0;  transform: translate(-50%,-50%) scale(18); }
+    }
+
+    /* ========= Common layout for pages ========= */
+    .page{
+      height:100%;
+      overflow:hidden;
+    }
+    .scroll{
+      height:100%;
+      overflow:auto;
+      padding: 16px 16px 96px; /* under bottom nav */
+      scrollbar-width: thin;
+    }
+    .scroll::-webkit-scrollbar{ width:6px; }
+    .scroll::-webkit-scrollbar-thumb{
+      background: rgba(0,0,0,.22);
+      border-radius:999px;
+    }
+    .container{ width:min(430px, 100%); margin:0 auto; }
+
+    /* ========= Feed (Стрічка) ========= */
+    .hello{
+      margin: 10px 2px 14px;
+      font-size:42px;
+      font-weight:700;
+      letter-spacing:-0.4px;
+      line-height:1.05;
+      color:#000;
+    }
+
+    .card{
+      border-radius:26px;
+      overflow:hidden;
+      box-shadow: var(--cardShadow);
+      margin: 14px 0;
+      background: rgba(255,255,255,.10);
+    }
+
+    .diiaCard{
+      height:205px;
+      background:
+        radial-gradient(140px 120px at 76% 44%, rgba(66,203,255,.55), transparent 60%),
+        radial-gradient(220px 160px at 80% 55%, rgba(10,85,255,.45), transparent 62%),
+        radial-gradient(240px 170px at 72% 88%, rgba(178,255,84,.35), transparent 64%),
+        linear-gradient(180deg, rgba(0,0,0,.88), rgba(0,0,0,.70));
+      position:relative;
+    }
+    .diiaCard::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(500px 240px at 60% 120%, rgba(255,204,0,.25), transparent 55%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .diiaInner{
+      position:absolute; inset:0;
+      padding: 22px 22px 16px;
+      display:flex; flex-direction:column; justify-content:space-between;
+      z-index:1;
+    }
+    .diiaTitle{
+      color:#fff;
+      font-weight:750;
+      letter-spacing:-0.3px;
+      font-size:34px;
+      line-height:1.05;
+      margin:0;
+    }
+    .diiaSub{
+      margin-top:10px;
+      color: rgba(255,255,255,.86);
+      font-weight:600;
+      font-size:18px;
+      letter-spacing:-0.1px;
+    }
+    .diiaFooter{
+      display:flex; align-items:center; justify-content:space-between;
+      background: linear-gradient(90deg, rgba(0,0,0,.18), rgba(0,0,0,.05));
+      border-top: 1px solid rgba(255,255,255,.10);
+      padding: 14px 18px;
+      margin: 0 -22px -16px;
+      backdrop-filter: blur(10px);
+    }
+    .diiaFooter span{
+      color: rgba(255,255,255,.92);
+      font-weight:750;
+      font-size:22px;
+      letter-spacing:-0.2px;
+    }
+
+    .circleArrow{
+      width:38px; height:38px;
+      border-radius:999px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 10px 18px rgba(0,0,0,.25);
+      flex:0 0 auto;
+    }
+    .circleArrow svg{ width:18px; height:18px; stroke:#0b0f14; stroke-width:2.4; fill:none; }
+
+    .lightCard{
+      background: rgba(255,255,255,.50);
+      border: 1px solid rgba(255,255,255,.45);
+      box-shadow: 0 18px 40px rgba(0,0,0,.10);
+    }
+    .lightInner{
+      padding: 20px 20px 18px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .lightTitle{
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:-0.35px;
+      margin:0;
+      color:#000;
+    }
+    .lightSub{
+      margin:0;
+      font-size:18px;
+      font-weight:600;
+      letter-spacing:-0.1px;
+      color: rgba(0,0,0,.78);
+    }
+    .lightRow{
+      margin-top:12px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .pillIcons{ display:flex; gap:10px; align-items:center; }
+    .pill{
+      width:38px; height:38px;
+      border-radius:999px;
+      display:grid; place-items:center;
+      box-shadow: 0 12px 18px rgba(0,0,0,.12);
+    }
+    .pill.blue{ background:#1f6bff; }
+    .pill.yellow{ background:#ffd60a; }
+    .pill svg{ width:20px; height:20px; fill:#fff; }
+    .pill.yellow svg{ fill:#000; }
+
+    .circleArrow.dark{
+      background: rgba(0,0,0,.92);
+      box-shadow: 0 14px 22px rgba(0,0,0,.22);
+    }
+    .circleArrow.dark svg{ stroke:#fff; }
+
+    .quickRow{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      margin: 18px 0 6px;
+    }
+    .qa{
+      width: 30.5%;
+      display:flex; flex-direction:column; align-items:center;
+      gap:10px; text-align:center; color:#000;
+    }
+    .qaBtn{
+      width:78px; height:78px;
+      border-radius:22px;
+      background: rgba(0,0,0,.92);
+      display:grid; place-items:center;
+      box-shadow: 0 14px 26px rgba(0,0,0,.18);
+    }
+    .qaBtn svg{ width:34px; height:34px; stroke:#fff; fill:none; stroke-width:2.2; }
+    .qaLabel{
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:-0.15px;
+      line-height:1.15;
+    }
+
+    .banner{
+      height:210px;
+      background:
+        radial-gradient(240px 140px at 35% 50%, rgba(255,255,255,.08), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.72)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="%23000000" offset="0"/><stop stop-color="%23101010" offset="1"/></linearGradient></defs><rect width="100%25" height="100%25" fill="url(%23g)"/><g opacity="0.22" fill="%23ffffff"><circle cx="120" cy="90" r="42"/><circle cx="240" cy="150" r="54"/><circle cx="370" cy="110" r="44"/><circle cx="520" cy="160" r="62"/><circle cx="690" cy="120" r="48"/></g></svg>');
+      background-size: cover;
+      background-position:center;
+      position:relative;
+    }
+    .bannerInner{
+      position:absolute; inset:0;
+      padding: 22px;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .bannerTop{
+      display:flex; gap:16px; align-items:center;
+    }
+    .badge{
+      width:74px; height:74px;
+      border-radius:20px;
+      background: rgba(255,255,255,.10);
+      border: 2px solid rgba(255,255,255,.22);
+      display:grid; place-items:center;
+      backdrop-filter: blur(10px);
+    }
+    .badge svg{ width:44px; height:44px; fill:#fff; }
+    .bannerTitle{
+      color:#fff;
+      font-weight:900;
+      letter-spacing:0.6px;
+      font-size:44px;
+      line-height:0.92;
+      text-transform:uppercase;
+    }
+    .bannerFooter{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 0 0;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color:#fff;
+      font-weight:800;
+      font-size:22px;
+      letter-spacing:-0.2px;
+    }
+
+    /* ========= Documents page (как на видео) ========= */
+    .docsBg{
+      /* более “пастельная” подложка как в видео */
+      background:
+        radial-gradient(520px 420px at 16% 74%, rgba(255,170,200,.55), transparent 62%),
+        radial-gradient(520px 420px at 82% 74%, rgba(255,220,120,.55), transparent 62%),
+        radial-gradient(560px 480px at 75% 18%, rgba(150,210,255,.60), transparent 62%),
+        radial-gradient(560px 480px at 20% 10%, rgba(130,220,200,.52), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+      position:relative;
+    }
+
+    .carousel{
+      margin-top: 44px; /* как в видео — карточка почти от верха */
+      display:flex;
+      gap:18px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      padding: 0 14px 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .carousel::-webkit-scrollbar{ height:0; }
+
+    .docCard{
+      scroll-snap-align:center;
+      flex: 0 0 86%;
+      max-width: 380px;
+      height: 640px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.34);
+      border: 1px solid rgba(255,255,255,.38);
+      box-shadow: 0 24px 52px rgba(0,0,0,.18);
+      overflow:hidden;
+      position:relative;
+      backdrop-filter: blur(10px);
+    }
+
+    /* внутри карточки – верхний блок */
+    .docTop{
+      display:flex;
+      gap:18px;
+      padding: 26px 22px 0;
+      align-items:flex-start;
+    }
+    .docTitle{
+      position:absolute;
+      top:18px; left:22px;
+      font-size:44px;
+      font-weight:800;
+      letter-spacing:-0.35px;
+      color:#000;
+    }
+    .docLogo{
+      width:190px;
+      height:248px;
+      border-radius:24px;
+      background: linear-gradient(180deg, rgba(0,0,0,.95), rgba(0,0,0,.85));
+      box-shadow: 0 18px 34px rgba(0,0,0,.28);
+      display:grid;
+      place-items:center;
+      margin-top: 78px;
+      position:relative;
+      overflow:hidden;
+    }
+    .docLogo::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(240px 180px at 50% 20%, rgba(255,255,255,.10), transparent 55%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .docLogo span{
+      font-size:64px;
+      font-weight:900;
+      color:#fff;
+      letter-spacing:-0.6px;
+      z-index:1;
+    }
+
+    .docInfo{
+      margin-top: 98px;
+      font-size:34px;
+      line-height:1.04;
+      font-weight:800;
+      letter-spacing:-0.25px;
+      color:#000;
+    }
+    .docInfo .muted{
+      display:block;
+      font-weight:700;
+      color: rgba(0,0,0,.88);
+    }
+    .docInfo .small{
+      display:block;
+      margin-top: 8px;
+      font-weight:700;
+      color: rgba(0,0,0,.88);
+    }
+
+    /* зелёная строка (бегущая) */
+    .marqueeBar{
+      position:absolute;
+      left:0; right:0;
+      top: 396px;          /* как в видео — примерно середина карточки */
+      height: 54px;
+      background: var(--marqueeBg);
+      box-shadow: inset 0 1px 0 rgba(0,0,0,.06);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+    }
+    .marqueeTrack{
+      display:flex;
+      gap:60px;
+      white-space:nowrap;
+      will-change: transform;
+      animation: marquee 11s linear infinite;
+      padding-left: 24px;
+    }
+    .marqueeText{
+      font-size:30px;
+      font-weight:800;
+      letter-spacing:-0.2px;
+      color:#0b0f14;
+    }
+    @keyframes marquee{
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* низ карточки */
+    .docBottom{
+      position:absolute;
+      left:22px;
+      right:22px;
+      bottom: 28px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .fio{
+      font-size:54px;
+      line-height:0.95;
+      font-weight:900;
+      letter-spacing:-0.35px;
+      color:#000;
+    }
+    .moreBtn{
+      width:52px;
+      height:52px;
+      border-radius:999px;
+      background: rgba(0,0,0,.92);
+      display:grid;
+      place-items:center;
+      box-shadow: 0 18px 28px rgba(0,0,0,.20);
+      flex:0 0 auto;
+    }
+    .moreBtn span{
+      width:6px; height:6px; border-radius:999px;
+      background:#fff;
+      box-shadow: 10px 0 0 #fff, -10px 0 0 #fff;
+      display:block;
+    }
+
+    /* точки-пейджер под каруселью */
+    .pager{
+      margin-top: 14px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      opacity:.85;
+    }
+    .pDot{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 2px 10px rgba(0,0,0,.10);
+      transition: transform .15s ease, background .15s ease;
+    }
+    .pDot.active{
+      background: rgba(255,255,255,.92);
+      transform: scale(1.08);
+    }
+
+    /* ========= Bottom nav ========= */
+    .bottomNav{
+      position:fixed;
+      left:0; right:0;
+      bottom:0;
+      padding: 10px 14px calc(env(safe-area-inset-bottom) + 10px);
+      background: var(--nav);
+      z-index:50;
+    }
+    .navRow{
+      display:flex;
+      justify-content:space-around;
+      align-items:flex-end;
+      gap:10px;
+    }
+    .navItem{
+      width:24%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      color: var(--navIcon);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:-0.1px;
+      text-decoration:none;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .navItem svg{
+      width:26px; height:26px;
+      stroke: var(--navIcon);
+      fill:none;
+      stroke-width:2.2;
+    }
+    .navItem.active{ color: var(--navIconActive); }
+    .navItem.active svg{ stroke: var(--navIconActive); }
+
+    @media (max-height: 720px){
+      .lock h1{ font-size:38px; }
+      .key{ height:78px; font-size:38px; }
+      .pad{ gap:14px 16px; }
+      .hello{ font-size:38px; }
+      .docCard{ height: 600px; }
+      .fio{ font-size:50px; }
+      .marqueeBar{ top: 372px; }
+    }
+  </style>
 </head>
-<body id="top">
+<body>
+  <div class="app">
 
-<header class="header">
-  <div class="container header__inner">
-    <a class="logo" href="#top">RUSTIFY</a>
+    <!-- ===== VIEW: PIN ===== -->
+    <section class="view lock" id="viewLock" aria-label="PIN view">
+      <div class="lockWrap">
+        <h1>Код для входу</h1>
 
-    <nav class="nav" aria-label="Навигация">
-      <a href="#about">О проекте</a>
-      <a href="#support">Поддержка</a>
-      <a href="#contacts">Контакты</a>
-    </nav>
-
-    <button class="btn btn-ghost header__btn" id="menuBtn" type="button" aria-label="Открыть меню">
-      ☰
-    </button>
-  </div>
-
-  <div class="container mobile-nav" id="mobileNav">
-    <a href="#about">О проекте</a>
-    <a href="#support">Поддержка</a>
-    <a href="#contacts">Контакты</a>
-  </div>
-</header>
-
-<main>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="container hero__inner hero__inner--single">
-      <div class="hero__content">
-        <h1>Rustify</h1>
-        <p class="subtitle">
-          Rustify — это уникальный проект, который переносит атмосферу Rust в мир Minecraft.
-        </p>
-
-        <div class="actions">
-          <!-- ✅ КНОПКА DONATELLO -->
-          <a
-            class="btn btn-primary"
-            href="https://donatello.to/rustify"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Поддержать проект
-          </a>
-
-          <a class="btn btn-ghost" href="#about">Узнать больше</a>
+        <div class="dots" id="dots" aria-label="dots">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
         </div>
 
-        <div class="chips">
-          <span class="chip">Выживание</span>
-          <span class="chip">PvP</span>
-          <span class="chip">Raid</span>
+        <div class="pad" aria-label="keypad">
+          <button class="key" data-key="1">1</button>
+          <button class="key" data-key="2">2</button>
+          <button class="key" data-key="3">3</button>
+
+          <button class="key" data-key="4">4</button>
+          <button class="key" data-key="5">5</button>
+          <button class="key" data-key="6">6</button>
+
+          <button class="key" data-key="7">7</button>
+          <button class="key" data-key="8">8</button>
+          <button class="key" data-key="9">9</button>
+
+          <button class="key icon" data-action="face" aria-label="Face ID (demo)">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 3H6a3 3 0 0 0-3 3v2"/>
+              <path d="M16 3h2a3 3 0 0 1 3 3v2"/>
+              <path d="M8 21H6a3 3 0 0 1-3-3v-2"/>
+              <path d="M16 21h2a3 3 0 0 0 3-3v-2"/>
+              <path d="M9 10h.01M15 10h.01"/>
+              <path d="M8.5 15c1 1 2.2 1.5 3.5 1.5s2.5-.5 3.5-1.5"/>
+              <path d="M12 12v.01"/>
+            </svg>
+          </button>
+
+          <button class="key" data-key="0">0</button>
+
+          <button class="key icon" data-action="del" aria-label="Delete">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 7H10L4 12l6 5h10a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/>
+              <path d="m14.5 10.5 4 4"/>
+              <path d="m18.5 10.5-4 4"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="note">Не пам'ятаю код для входу</div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: FEED (Стрічка) ===== -->
+    <section class="view page hidden" id="viewFeed" aria-label="Feed view">
+      <div class="scroll">
+        <div class="container">
+          <div class="hello">Привіт, 🎄</div>
+
+          <div class="card diiaCard">
+            <div class="diiaInner">
+              <div>
+                <div class="diiaTitle">Дія.Картка</div>
+                <div class="diiaSub">Єдина картка українця</div>
+              </div>
+              <div class="diiaFooter">
+                <span>Відкрити картку</span>
+                <div class="circleArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card lightCard">
+            <div class="lightInner">
+              <h2 class="lightTitle">Незламність</h2>
+              <p class="lightSub">Мапа пунктів Незламності та Укриттів</p>
+
+              <div class="lightRow">
+                <div class="pillIcons">
+                  <div class="pill blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M12 22s7-4.4 7-12a7 7 0 0 0-14 0c0 7.6 7 12 7 12z"/>
+                      <circle cx="12" cy="10" r="2.6" fill="#1f6bff"></circle>
+                    </svg>
+                  </div>
+                  <div class="pill yellow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 10-14h-7l0-6z"/></svg>
+                  </div>
+                </div>
+
+                <div class="circleArrow dark" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quickRow">
+            <div class="qa">
+              <div class="qaBtn" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 5h16v6H4z"/>
+                  <path d="M4 15h10v4H4z"/>
+                  <path d="M16 15h4v4h-4z"/>
+                </svg>
+              </div>
+              <div class="qaLabel">Сканувати<br>QR-код</div>
+            </div>
+
+            <div class="qa">
+              <div class="qaBtn" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3v18" />
+                  <path d="M12 3c3 3 4 5 4 8 0 4-2 7-4 10" />
+                  <path d="M12 3c-3 3-4 5-4 8 0 4 2 7 4 10" />
+                  <path d="M8 12c2 1 6 1 8 0" />
+                </svg>
+              </div>
+              <div class="qaLabel">Військові<br>облігації</div>
+            </div>
+
+            <div class="qa">
+              <div class="qaBtn" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 20h16" />
+                  <path d="M7 16l10-10" />
+                  <path d="M9 14a5 5 0 0 1 6-6" />
+                  <path d="M7 12a8 8 0 0 1 10-10" />
+                </svg>
+              </div>
+              <div class="qaLabel">Відсутній<br>зв'язок</div>
+            </div>
+          </div>
+
+          <div class="card banner">
+            <div class="bannerInner">
+              <div class="bannerTop">
+                <div class="badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3l7 3v6c0 5-3.4 8.6-7 9-3.6-.4-7-4-7-9V6l7-3z"/>
+                    <path d="M9.2 8.5v8.7" fill="none"/>
+                    <path d="M14.8 8.5v8.7" fill="none"/>
+                    <path d="M9.2 8.5c1.6 1.4 4 1.4 5.6 0" fill="none"/>
+                  </svg>
+                </div>
+                <div class="bannerTitle">ЛІНІЯ<br>ДРОНІВ</div>
+              </div>
+
+              <div class="bannerFooter">
+                <span>Змінити хід подій</span>
+                <div class="circleArrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ABOUT -->
-  <section id="about" class="section container">
-    <div class="card">
-      <h2>О проекте</h2>
-      <p class="muted">
-        Rustify — новый уникальный проект, который переносит атмосферу Rust в мир Minecraft.
-        Жёсткое выживание, развитая система лута, строительство баз и постоянная борьба за ресурсы
-        создают по-настоящему напряжённый игровой процесс.
-        <br><br>
-        Здесь каждое решение имеет значение: риск, тактика и взаимодействие с другими игроками
-        определяют, кто выживет и станет сильнее.
-        Rustify — это не просто сервер, а отдельный мир, где выживает сильнейший.
-      </p>
+    <!-- ===== VIEW: DOCUMENTS (как на видео) ===== -->
+    <section class="view page hidden docsBg" id="viewDocs" aria-label="Documents view">
+      <div class="scroll" style="padding-left:0;padding-right:0;">
+        <div class="container" style="width:100%;max-width:100%;">
+          <div class="carousel" id="docCarousel" aria-label="Документи карусель">
+            <!-- Card 1 -->
+            <article class="docCard">
+              <div class="docTitle">єДокумент</div>
 
-      <div class="stats">
-        <div class="stat">
-          <div class="stat__num">24/7</div>
-          <div class="muted small">Поддержка</div>
-        </div>
-        <div class="stat">
-          <div class="stat__num">Модерация</div>
-          <div class="muted small">Активная и честная</div>
-        </div>
-        <div class="stat">
-          <div class="stat__num">Обновления</div>
-          <div class="muted small">Стабильность развития</div>
+              <div class="docTop">
+                <div class="docLogo" aria-hidden="true">
+                  <span>Дія</span>
+                </div>
+
+                <div class="docInfo">
+                  <span class="muted">Дата народження:</span>
+                  <span class="small">Настройте<br>в боте</span>
+                  <br><br>
+                  <span class="muted">РНОКПП:</span>
+                  <span class="small">Настройте<br>ИНН в<br>боте</span>
+                </div>
+              </div>
+
+              <!-- БЕГАЮЩАЯ СТРОКА -->
+              <div class="marqueeBar" aria-label="Маркер-строка">
+                <div class="marqueeTrack">
+                  <div class="marqueeText">Ой у лузі червона калина похилилася, чогось наша славна Україна…</div>
+                  <div class="marqueeText">Ой у лузі червона калина похилилася, чогось наша славна Україна…</div>
+                </div>
+              </div>
+
+              <div class="docBottom">
+                <div class="fio">Настройте<br>ФИО</div>
+                <div class="moreBtn" aria-hidden="true"><span></span></div>
+              </div>
+            </article>
+
+            <!-- Card 2 (чтобы справа была видна часть как в видео) -->
+            <article class="docCard" style="background: rgba(255,255,255,.28);">
+              <div class="docTitle" style="opacity:.0">.</div>
+              <div class="docTop">
+                <div class="docLogo" aria-hidden="true" style="opacity:.25">
+                  <span>Дія</span>
+                </div>
+                <div class="docInfo" style="opacity:.35">
+                  <span class="muted">…</span>
+                  <span class="small">…</span>
+                </div>
+              </div>
+              <div class="marqueeBar" style="opacity:.65">
+                <div class="marqueeTrack" style="animation-duration: 12s;">
+                  <div class="marqueeText">Ой у лузі червона калина похилилася…</div>
+                  <div class="marqueeText">Ой у лузі червона калина похилилася…</div>
+                </div>
+              </div>
+              <div class="docBottom">
+                <div class="fio" style="opacity:.35">…</div>
+                <div class="moreBtn" aria-hidden="true" style="opacity:.45"><span></span></div>
+              </div>
+            </article>
+          </div>
+
+          <!-- pager dots like video -->
+          <div class="pager" id="docPager" aria-label="pager">
+            <div class="pDot active"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+          </div>
+
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SUPPORT -->
-  <section id="support" class="section container">
-    <div class="card support-card">
-      <h2>Поддержка проекта</h2>
+    <!-- ===== VIEW: SERVICES (placeholder) ===== -->
+    <section class="view page hidden" id="viewServices" aria-label="Services view">
+      <div class="scroll">
+        <div class="container">
+          <div class="hello" style="font-size:38px;">Сервіси</div>
+          <div class="card lightCard" style="padding:18px;">
+            <div style="font-size:20px;font-weight:700;color:rgba(0,0,0,.75);">
+              Заглушка. Якщо хочеш — зроблю екран сервісів як у відео теж.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <p class="muted">
-        Rustify развивается благодаря поддержке сообщества.
-        Вы можете поддержать проект через Donatello — доступны разные валюты и страны.
-      </p>
+    <!-- ===== VIEW: MENU (placeholder) ===== -->
+    <section class="view page hidden" id="viewMenu" aria-label="Menu view">
+      <div class="scroll">
+        <div class="container">
+          <div class="hello" style="font-size:38px;">Меню</div>
+          <div class="card lightCard" style="padding:18px;">
+            <div style="font-size:20px;font-weight:700;color:rgba(0,0,0,.75);">
+              Заглушка. Якщо потрібно — повторю “Меню” з відео 1-в-1.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <!-- ✅ КНОПКА DONATELLO -->
-      <a
-        class="btn btn-primary support-btn"
-        href="https://donatello.to/rustify"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Поддержать проект
-      </a>
+    <!-- Bottom nav (общая) -->
+    <nav class="bottomNav" aria-label="Bottom navigation">
+      <div class="navRow container">
+        <a class="navItem active" href="javascript:void(0)" data-nav="feed">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 5h16v6H4z"/>
+            <path d="M4 15h10v4H4z"/>
+            <path d="M16 15h4v4h-4z"/>
+          </svg>
+          <div>Стрічка</div>
+        </a>
 
-      <p class="muted small support-note">
-        Поддержка не даёт игровых преимуществ и не ломает баланс.
-      </p>
-    </div>
-  </section>
+        <a class="navItem" href="javascript:void(0)" data-nav="docs">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 3h8l4 4v14H7z"/>
+            <path d="M15 3v4h4"/>
+          </svg>
+          <div>Документи</div>
+        </a>
 
-  <!-- CONTACTS -->
-  <section id="contacts" class="section container">
-    <div class="card contacts-card">
-      <h2>Контакты</h2>
-      <p class="muted">Больше новостей проекта:</p>
+        <a class="navItem" href="javascript:void(0)" data-nav="services">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2l2.2 6.4L21 9l-5 3.9L17.8 20 12 16.5 6.2 20 8 12.9 3 9l6.8-.6z"/>
+          </svg>
+          <div>Сервіси</div>
+        </a>
 
-      <div class="contacts-list">
-        <a
-          class="contact-link"
-          href="https://t.me/rustifyy"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="tg-icon">ʕ•́ᴥ•̀ʔっ♡</span>
-          Telegram — @rustifyy
+        <a class="navItem" href="javascript:void(0)" data-nav="menu">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"/>
+            <path d="M4 21a8 8 0 0 1 16 0"/>
+          </svg>
+          <div>Меню</div>
         </a>
       </div>
-    </div>
-  </section>
+    </nav>
 
-</main>
-
-<footer class="footer">
-  <div class="container footer__inner">
-    <span class="muted small">© <span id="year"></span> Rustify</span>
-    <a class="muted small" href="#top">Наверх ↑</a>
   </div>
-</footer>
 
-<script src="script.js"></script>
+  <script>
+    // ===== PIN -> enter app (accept any 4 digits) =====
+    let entered = "";
+    const dotEls = Array.from(document.querySelectorAll("#dots .dot"));
+    const viewLock = document.getElementById("viewLock");
+
+    const views = {
+      feed: document.getElementById("viewFeed"),
+      docs: document.getElementById("viewDocs"),
+      services: document.getElementById("viewServices"),
+      menu: document.getElementById("viewMenu"),
+    };
+
+    const navItems = Array.from(document.querySelectorAll(".navItem"));
+
+    function setDots(count){
+      dotEls.forEach((d, i) => d.classList.toggle("filled", i < count));
+    }
+
+    function ripple(btn, clientX, clientY){
+      const r = document.createElement("span");
+      r.className = "ripple";
+      const rect = btn.getBoundingClientRect();
+      r.style.left = (clientX - rect.left) + "px";
+      r.style.top  = (clientY - rect.top) + "px";
+      btn.appendChild(r);
+      r.addEventListener("animationend", () => r.remove());
+    }
+
+    function showView(name){
+      Object.entries(views).forEach(([k, el]) => {
+        el.classList.toggle("hidden", k !== name);
+      });
+      navItems.forEach(a => a.classList.toggle("active", a.dataset.nav === name));
+    }
+
+    function enterApp(){
+      viewLock.classList.add("hidden");
+      // по умолчанию открываем "Стрічка"
+      showView("feed");
+    }
+
+    function handleDigit(d){
+      if (entered.length >= 4) return;
+      entered += d;
+      setDots(entered.length);
+      if (entered.length === 4){
+        setTimeout(enterApp, 120);
+      }
+    }
+
+    function del(){
+      if (!entered.length) return;
+      entered = entered.slice(0, -1);
+      setDots(entered.length);
+    }
+
+    document.querySelectorAll(".key").forEach(btn => {
+      btn.addEventListener("pointerdown", (e) => ripple(btn, e.clientX, e.clientY));
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.key;
+        const action = btn.dataset.action;
+        if (key != null) handleDigit(key);
+        else if (action === "del") del();
+      });
+    });
+
+    // keyboard optional
+    window.addEventListener("keydown", (e) => {
+      if (!viewLock.classList.contains("hidden")) {
+        if (e.key >= "0" && e.key <= "9") handleDigit(e.key);
+        if (e.key === "Backspace") del();
+      }
+    });
+
+    // ===== Bottom navigation =====
+    navItems.forEach(a => {
+      a.addEventListener("click", () => {
+        if (!viewLock.classList.contains("hidden")) return; // пока на PIN — не переключаем
+        showView(a.dataset.nav);
+      });
+    });
+
+    // ===== Documents carousel pager =====
+    const carousel = document.getElementById("docCarousel");
+    const pagerDots = Array.from(document.querySelectorAll("#docPager .pDot"));
+
+    function updatePager(){
+      // active based on nearest card center
+      const cards = Array.from(carousel.querySelectorAll(".docCard"));
+      const center = carousel.scrollLeft + carousel.clientWidth / 2;
+      let bestIdx = 0, bestDist = Infinity;
+
+      cards.forEach((c, i) => {
+        const cardCenter = c.offsetLeft + c.clientWidth / 2;
+        const dist = Math.abs(cardCenter - center);
+        if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+      });
+
+      // video shows many dots; we’ll light first dots by index
+      pagerDots.forEach((d, i) => d.classList.toggle("active", i === bestIdx));
+    }
+    carousel.addEventListener("scroll", () => requestAnimationFrame(updatePager), { passive:true });
+    updatePager();
+  </script>
 </body>
 </html>
