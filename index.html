@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Demo</title>
+
   <style>
     :root{
       --bgTop:#b9d7f2;
@@ -15,6 +16,45 @@
       --nav:#0c0d10;
       --navIcon: rgba(255,255,255,.75);
       --navIconActive: rgba(255,255,255,.95);
+
+      --marqueeBg: rgba(155, 220, 138, .88);
+    }
+
+    /* ===== Diia font: e-Ukraine (place files in ./fonts/) ===== */
+    @font-face{
+      font-family:"e-Ukraine";
+      src:url("./fonts/e-Ukraine-Regular.woff2") format("woff2");
+      font-weight:400;
+      font-style:normal;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"e-Ukraine";
+      src:url("./fonts/e-Ukraine-Medium.woff2") format("woff2");
+      font-weight:500;
+      font-style:normal;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"e-Ukraine";
+      src:url("./fonts/e-Ukraine-Bold.woff2") format("woff2");
+      font-weight:700;
+      font-style:normal;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"e-Ukraine Head";
+      src:url("./fonts/e-UkraineHead-Regular.woff2") format("woff2");
+      font-weight:400;
+      font-style:normal;
+      font-display:swap;
+    }
+    @font-face{
+      font-family:"e-Ukraine Head";
+      src:url("./fonts/e-UkraineHead-Bold.woff2") format("woff2");
+      font-weight:700;
+      font-style:normal;
+      font-display:swap;
     }
 
     *{ box-sizing:border-box; }
@@ -22,8 +62,7 @@
     body{
       margin:0;
       background: linear-gradient(180deg, var(--bgTop), var(--bgBot));
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-                   system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family:"e-Ukraine", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
       color:var(--text);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -69,6 +108,7 @@
     .navItem.active{ color: var(--navIconActive); }
     .navItem.active svg{ stroke: var(--navIconActive); }
 
+    /* ===== common page scroll ===== */
     .page{ height:100%; overflow:hidden; }
     .scroll{
       height:100%;
@@ -92,8 +132,10 @@
     .lock h1{
       margin:18px 0 16px;
       font-size:44px; line-height:1.05;
-      font-weight:600; letter-spacing:-0.2px;
+      font-weight:500;
+      letter-spacing:-0.25px;
       text-align:center;
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
     }
     .dots{ display:flex; gap:14px; margin:10px 0 26px; }
     .dot{
@@ -123,9 +165,11 @@
       overflow:hidden;
       display:grid; place-items:center;
       font-size:44px; line-height:1;
-      font-weight:600; letter-spacing:-0.2px;
+      font-weight:500;
+      letter-spacing:-0.2px;
       color: rgba(0,0,0,.88);
       transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease;
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
     }
     .key::before{
       content:"";
@@ -137,6 +181,7 @@
     .key:active{ transform: scale(.94); background: rgba(255,255,255,.88); box-shadow: 0 10px 18px rgba(0,0,0,.10); }
     .key.icon{ font-size:0; }
     .key.icon svg{ width:40px; height:40px; stroke: rgba(0,0,0,.78); }
+
     .note{
       margin-top:auto;
       padding-top:20px;
@@ -173,34 +218,35 @@
         linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
     }
 
+    /* ===== DOCS layout: НЕ на весь экран, видно соседние ===== */
     .carousel{
-      margin-top: 44px;
+      margin-top: 34px;
       display:flex;
-      gap:18px;
+      gap: 18px;
       overflow-x:auto;
       scroll-snap-type:x mandatory;
-      padding: 0 18px 10px;
+      padding: 0 26px 12px;
       -webkit-overflow-scrolling: touch;
     }
     .carousel::-webkit-scrollbar{ height:0; }
 
     .docCard{
       scroll-snap-align:center;
-      flex: 0 0 92%;
-      max-width: 420px;
-      height: 690px;
-      border-radius: 34px;
-      background:
-        radial-gradient(520px 420px at 16% 74%, rgba(255,170,200,.40), transparent 62%),
-        radial-gradient(520px 420px at 82% 74%, rgba(255,220,120,.44), transparent 62%),
-        radial-gradient(560px 480px at 75% 18%, rgba(150,210,255,.50), transparent 62%),
-        radial-gradient(560px 480px at 20% 10%, rgba(130,220,200,.42), transparent 62%),
-        rgba(255,255,255,.16);
-      border: 1px solid rgba(255,255,255,.38);
+      flex: 0 0 86%;
+      max-width: 392px;
+      height: 675px;
+      border-radius: 36px;
+      border: 1px solid rgba(255,255,255,.42);
       box-shadow: 0 26px 58px rgba(0,0,0,.18);
       overflow:hidden;
       position:relative;
       backdrop-filter: blur(10px);
+      background:
+        radial-gradient(560px 520px at 18% 78%, rgba(255,170,200,.34), transparent 62%),
+        radial-gradient(560px 520px at 86% 78%, rgba(255,220,120,.40), transparent 62%),
+        radial-gradient(620px 520px at 78% 18%, rgba(150,210,255,.46), transparent 62%),
+        radial-gradient(620px 520px at 22% 14%, rgba(130,220,200,.36), transparent 62%),
+        rgba(255,255,255,.14);
     }
 
     /* ---- marquee обновлено ---- */
@@ -208,7 +254,7 @@
       position:absolute; left:0; right:0;
       bottom: 128px;
       height: 54px;
-      background: rgba(155, 220, 138, .88);
+      background: var(--marqueeBg);
       box-shadow: inset 0 1px 0 rgba(0,0,0,.06);
       overflow:hidden;
       display:flex; align-items:center;
@@ -221,9 +267,10 @@
       padding-left: 22px;
     }
     .docMarqueeText{
+      font-family:"e-Ukraine";
+      font-weight:700;
       font-size:22px;
-      font-weight:900;
-      letter-spacing:-0.1px;
+      letter-spacing:-0.12px;
       color:#0b0f14;
     }
     @keyframes docMarquee{
@@ -240,10 +287,11 @@
       background: rgba(255,255,255,.02);
     }
     .docBottomTitle{
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
+      font-weight:700;
       font-size:52px;
+      letter-spacing:-0.75px;
       line-height:0.92;
-      font-weight:950;
-      letter-spacing:-0.6px;
       color:#000;
     }
     .docBottomRight{
@@ -298,30 +346,34 @@
     /* ---- Card 1 Tax ---- */
     .taxPad{ padding: 30px 30px 0; }
     .taxTitle{
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
+      font-weight:700;
+      letter-spacing:-0.6px;
       font-size:46px;
-      font-weight:950;
-      letter-spacing:-0.55px;
-      line-height:1.0;
+      line-height:1.02;
       margin: 6px 0 22px;
       color:#000;
     }
     .taxBlock{
+      font-family:"e-Ukraine";
+      font-weight:700;
       font-size:30px;
-      font-weight:950;
       letter-spacing:-0.35px;
       margin: 0 0 18px;
       color:#000;
     }
     .taxName{
+      font-family:"e-Ukraine";
+      font-weight:700;
       font-size:30px;
-      font-weight:900;
       letter-spacing:-0.35px;
       margin: 0 0 26px;
       color:#000;
     }
     .taxLabel{
+      font-family:"e-Ukraine";
+      font-weight:500;
       font-size:22px;
-      font-weight:800;
       letter-spacing:-0.18px;
       color: rgba(0,0,0,.86);
       line-height:1.18;
@@ -330,10 +382,11 @@
     /* ---- Card 2 Passport ---- */
     .passPad{ padding: 30px 30px 0; }
     .passTitle{
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
+      font-weight:700;
+      letter-spacing:-0.6px;
       font-size:44px;
-      font-weight:950;
-      letter-spacing:-0.55px;
-      line-height:1.0;
+      line-height:1.02;
       margin: 6px 0 22px;
       color:#000;
     }
@@ -355,22 +408,32 @@
       position:relative;
       overflow:hidden;
     }
+    .passLogo::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(260px 240px at 52% 18%, rgba(255,255,255,.10), transparent 60%);
+      opacity:.85;
+      pointer-events:none;
+    }
     .passLogo span{
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
       font-size:66px;
-      font-weight:950;
+      font-weight:700;
       letter-spacing:-0.6px;
       color:#fff;
       opacity:.88;
+      z-index:1;
     }
     .passInfo{
+      font-family:"e-Ukraine";
+      font-weight:500;
       margin-top: 8px;
       font-size:24px;
-      font-weight:900;
       letter-spacing:-0.2px;
       color:#000;
       line-height:1.2;
     }
-    .passInfo .muted{ display:block; margin-top: 14px; }
+    .passInfo .muted{ display:block; margin-top: 14px; font-weight:500; }
     .signature{ margin-top: 24px; width: 190px; height: 70px; opacity:.92; }
 
     /* pager dots */
@@ -391,7 +454,7 @@
     .pDot.active{ background: rgba(255,255,255,.92); transform: scale(1.1); }
 
     @media (max-height: 720px){
-      .docCard{ height: 640px; border-radius: 30px; }
+      .docCard{ height: 640px; border-radius: 32px; }
       .docMarqueeBar{ bottom: 120px; height: 52px; }
       .docBottomTitle{ font-size:46px; }
       .taxTitle{ font-size:42px; }
@@ -502,6 +565,7 @@
                   <div class="passInfo">
                     Дата<br>народження:<br>Настройте<br>в боте
                     <span class="muted">Номер:<br>1</span>
+
                     <svg class="signature" viewBox="0 0 260 100" aria-hidden="true">
                       <path d="M18 62c34-34 50-38 62-18 12 20-8 40-30 28-16-9-9-34 18-40 26-6 54 10 74 30 18 18 34 18 52-2 12-14 22-28 38-26 10 1 12 10-2 18-16 10-30 10-46 0"
                             fill="none" stroke="#0b0f14" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>
@@ -541,13 +605,13 @@
     </section>
 
     <!-- placeholders -->
-    <section class="view page hidden" id="viewServices"><div class="scroll"><div class="container"><div style="font-size:38px;font-weight:900;">Сервіси</div></div></div></section>
-    <section class="view page hidden" id="viewMenu"><div class="scroll"><div class="container"><div style="font-size:38px;font-weight:900;">Меню</div></div></div></section>
+    <section class="view page hidden" id="viewServices"><div class="scroll"><div class="container"><div style="font-size:38px;font-weight:700;font-family:'e-Ukraine Head','e-Ukraine',system-ui,sans-serif;">Сервіси</div></div></div></section>
+    <section class="view page hidden" id="viewMenu"><div class="scroll"><div class="container"><div style="font-size:38px;font-weight:700;font-family:'e-Ukraine Head','e-Ukraine',system-ui,sans-serif;">Меню</div></div></div></section>
 
     <!-- bottom nav -->
     <nav class="bottomNav" aria-label="Bottom navigation">
       <div class="navRow">
-        <a class="navItem" href="javascript:void(0)" data-nav="feed">
+        <a class="navItem" href="javascript:void(0)" data-nav="docs">
           <svg viewBox="0 0 24 24">
             <path d="M4 5h16v6H4z"/>
             <path d="M4 15h10v4H4z"/>
@@ -654,30 +718,28 @@
     navItems.forEach(a => {
       a.addEventListener("click", () => {
         if (document.body.classList.contains("locked")) return;
-        showView(a.dataset.nav);
+        const key = a.dataset.nav;
+        if (key === "services") showView("services");
+        else if (key === "menu") showView("menu");
+        else showView("docs");
       });
     });
 
     // ===== Dynamic "updated" time (user local time) =====
     function pad2(n){ return String(n).padStart(2, "0"); }
-    function formatNow(){
+    function makeUpdatedLine(){
       const d = new Date();
       const hh = pad2(d.getHours());
       const mm = pad2(d.getMinutes());
       const dd = pad2(d.getDate());
       const mo = pad2(d.getMonth()+1);
       const yy = d.getFullYear();
-
-      // как на примере: "Документ оновлено о 16:50 | 10.02.2026 • ..."
       return `Документ оновлено о ${hh}:${mm} | ${dd}.${mo}.${yy} • `;
     }
-
     function updateUpdatedText(){
-      const text = formatNow();
-      document.querySelectorAll(".js-updated-text").forEach(el => {
-        // делаем длиннее, чтобы лента выглядела плотной
-        el.textContent = text + text + text;
-      });
+      const base = makeUpdatedLine();
+      const long = base + base + base + base;
+      document.querySelectorAll(".js-updated-text").forEach(el => el.textContent = long);
     }
     updateUpdatedText();
     setInterval(updateUpdatedText, 1000);
