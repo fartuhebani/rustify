@@ -196,7 +196,7 @@
       to   { opacity:0;  transform: translate(-50%,-50%) scale(18); }
     }
 
-    /* ===================== FEED (Стрічка) ===================== */
+    /* ===================== FEED (Стрічка) — как раньше ===================== */
     .hello{
       margin: 6px 0 10px;
       font-size:46px;
@@ -400,9 +400,7 @@
       font-weight:500;
       color: rgba(0,0,0,.60);
     }
-    .newsBody{
-      padding: 14px 16px;
-    }
+    .newsBody{ padding: 14px 16px; }
     .newsTitle{
       font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
       font-size:26px;
@@ -452,21 +450,191 @@
       line-height:1.05;
     }
 
-    /* ===================== DOCS (пустая) ===================== */
+    /* ===================== DOCS (ЄДокумент 1-в-1) ===================== */
     .docsBg{
       background:
-        radial-gradient(520px 420px at 16% 74%, rgba(255,170,200,.55), transparent 62%),
-        radial-gradient(520px 420px at 82% 74%, rgba(255,220,120,.55), transparent 62%),
-        radial-gradient(560px 480px at 75% 18%, rgba(150,210,255,.60), transparent 62%),
-        radial-gradient(560px 480px at 20% 10%, rgba(130,220,200,.52), transparent 62%),
-        linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+        radial-gradient(520px 520px at 20% 78%, rgba(232, 170, 210, .55), transparent 62%),
+        radial-gradient(520px 520px at 85% 78%, rgba(250, 230, 170, .55), transparent 62%),
+        radial-gradient(600px 520px at 75% 18%, rgba(160, 215, 255, .55), transparent 62%),
+        radial-gradient(600px 520px at 18% 12%, rgba(150, 230, 210, .45), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
     }
-    .emptyHint{
-      margin-top: 40px;
-      text-align:center;
-      font-size:20px;
+
+    .docsWrap{
+      width:min(430px, 100%);
+      margin:0 auto;
+      padding-top: 20px;
+    }
+
+    /* сама карточка как на фото: не full width */
+    .eCard{
+      width: 100%;
+      max-width: 390px;
+      height: 640px;
+      margin: 0 auto;
+      border-radius: 34px;
+      overflow:hidden;
+      position:relative;
+      background:
+        radial-gradient(700px 600px at 18% 80%, rgba(235, 170, 215, .35), transparent 62%),
+        radial-gradient(700px 600px at 86% 80%, rgba(255, 230, 170, .40), transparent 62%),
+        radial-gradient(740px 600px at 78% 16%, rgba(170, 220, 255, .50), transparent 62%),
+        radial-gradient(740px 600px at 22% 12%, rgba(160, 240, 220, .35), transparent 62%),
+        rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.42);
+      box-shadow: 0 28px 60px rgba(0,0,0,.20);
+      backdrop-filter: blur(12px);
+    }
+
+    .eTop{
+      padding: 28px 26px 0;
+    }
+    .eTitle{
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
+      font-size:44px;
+      font-weight:700;
+      letter-spacing:-0.7px;
+      color:#000;
+      margin: 0 0 18px;
+    }
+
+    .eRow{
+      display:flex;
+      gap: 20px;
+      align-items:flex-start;
+      padding: 6px 26px 0;
+    }
+
+    /* “фото” слева (иконка Дія) */
+    .ePhoto{
+      width: 220px;
+      height: 255px;
+      border-radius: 30px;
+      background:
+        radial-gradient(220px 190px at 40% 10%, rgba(255,255,255,.10), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.92), rgba(0,0,0,.86));
+      box-shadow: 0 20px 40px rgba(0,0,0,.22);
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+    }
+    .ePhoto::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(260px 240px at 70% 22%, rgba(255,255,255,.12), transparent 60%);
+      opacity:.9;
+    }
+    .ePhoto span{
+      position:relative;
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
+      font-size:72px;
+      font-weight:700;
+      letter-spacing:-0.8px;
+      color:#fff;
+      opacity:.90;
+      transform: translateY(-2px);
+    }
+
+    .eInfo{
+      font-family:"e-Ukraine";
+      font-size:26px;
       font-weight:500;
-      color: rgba(0,0,0,.45);
+      letter-spacing:-0.2px;
+      line-height:1.22;
+      color:#000;
+      margin-top: 12px;
+    }
+    .eInfo .label{
+      display:block;
+      font-weight:500;
+      margin-bottom: 10px;
+    }
+    .eInfo .gap{ height: 22px; }
+
+    /* зелёная полоса “Документ діє…” */
+    .eGreen{
+      position:absolute;
+      left:0; right:0;
+      bottom: 126px;
+      height: 54px;
+      background: rgba(155, 220, 138, .88);
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      padding-right: 22px;
+      box-shadow: inset 0 1px 0 rgba(0,0,0,.06);
+      overflow:hidden;
+    }
+    .eGreenText{
+      font-family:"e-Ukraine";
+      font-size:24px;
+      font-weight:500;
+      letter-spacing:-0.1px;
+      color:#000;
+      white-space:nowrap;
+      transform: translateX(10px);
+    }
+
+    /* нижний блок “Настройте ФИО” + … */
+    .eBottom{
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height: 126px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      padding: 18px 22px 22px;
+    }
+    .eBottomTitle{
+      font-family:"e-Ukraine Head","e-Ukraine",system-ui,sans-serif;
+      font-size:52px;
+      font-weight:700;
+      letter-spacing:-0.8px;
+      line-height:0.92;
+      color:#000;
+    }
+    .eMenu{
+      width:50px; height:50px;
+      border-radius:999px;
+      background: rgba(0,0,0,.92);
+      display:grid;
+      place-items:center;
+      margin-bottom: 10px;
+      box-shadow: 0 18px 28px rgba(0,0,0,.18);
+    }
+    .eMenu span{
+      width:6px; height:6px;
+      border-radius:999px;
+      background:#fff;
+      box-shadow: 10px 0 0 #fff, -10px 0 0 #fff;
+      display:block;
+    }
+
+    /* точки под карточкой */
+    .pagerDots{
+      margin: 18px 0 0;
+      display:flex;
+      justify-content:center;
+      gap: 12px;
+      opacity:.75;
+    }
+    .pDot{
+      width:10px; height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 2px 10px rgba(0,0,0,.10);
+    }
+    .pDot.active{ background: rgba(255,255,255,.92); }
+
+    @media (max-height: 760px){
+      .eCard{ height: 600px; }
+      .ePhoto{ width: 205px; height: 240px; }
+      .eTitle{ font-size:42px; }
+      .eInfo{ font-size:24px; }
+      .eBottomTitle{ font-size:48px; }
+      .eGreen{ bottom: 120px; height: 52px; }
     }
   </style>
 </head>
@@ -643,11 +811,46 @@
       </div>
     </section>
 
-    <!-- ===== DOCS (ПУСТО) ===== -->
+    <!-- ===== DOCS (ЄДокумент) ===== -->
     <section class="view page hidden docsBg" id="viewDocs" aria-label="Documents view">
       <div class="scroll">
-        <div class="container">
-          <div class="emptyHint">Документи — порожньо</div>
+        <div class="docsWrap">
+          <div class="eCard" aria-label="ЄДокумент">
+            <div class="eTop">
+              <div class="eTitle">єДокумент</div>
+            </div>
+
+            <div class="eRow">
+              <div class="ePhoto" aria-label="Фото">
+                <span>Дія</span>
+              </div>
+
+              <div class="eInfo">
+                <span class="label">Дата<br>народження:<br>Настройте<br>в боте</span>
+                <div class="gap"></div>
+                <span class="label">РНОКПП:<br>Настройте<br>ИНН в<br>боте</span>
+              </div>
+            </div>
+
+            <div class="eGreen">
+              <div class="eGreenText">Документ діє під час воєнного стану</div>
+            </div>
+
+            <div class="eBottom">
+              <div class="eBottomTitle">Настройте<br>ФИО</div>
+              <div class="eMenu" aria-hidden="true"><span></span></div>
+            </div>
+          </div>
+
+          <div class="pagerDots" aria-hidden="true">
+            <div class="pDot active"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+            <div class="pDot"></div>
+          </div>
         </div>
       </div>
     </section>
